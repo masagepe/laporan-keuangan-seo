@@ -61,7 +61,18 @@ const DOM = {
   filterEndDate: document.getElementById('filter-end-date'),
   
   transactionListBody: document.getElementById('transaction-list-body'),
-  noDataAlert: document.getElementById('no-data-alert')
+  noDataAlert: document.getElementById('no-data-alert'),
+  
+  // Settings & Sync Modal selectors
+  btnOpenSettings: document.getElementById('btn-open-settings'),
+  btnCloseSettings: document.getElementById('btn-close-settings'),
+  settingsModal: document.getElementById('settings-modal'),
+  syncUrlInput: document.getElementById('sync-url-input'),
+  syncConnectionStatus: document.getElementById('sync-connection-status'),
+  syncLastTime: document.getElementById('sync-last-time'),
+  syncAutoToggle: document.getElementById('sync-auto-toggle'),
+  btnTestSync: document.getElementById('btn-test-sync'),
+  btnForceUpload: document.getElementById('btn-force-upload')
 };
 
 // -------------------------------------------------------------
@@ -638,6 +649,7 @@ DOM.transactionForm.addEventListener('submit', (e) => {
   
   saveTransactions();
   updateUI();
+  uploadToCloud(false);
 });
 
 window.editTransaction = function(id) {
@@ -684,6 +696,7 @@ window.deleteTransaction = function(id) {
     }
     saveTransactions();
     updateUI();
+    uploadToCloud(false);
   }
 };
 
@@ -824,6 +837,7 @@ DOM.fileImportCsv.addEventListener('change', (e) => {
         });
         saveTransactions();
         updateUI();
+        uploadToCloud(false);
         alert('Impor data sukses.');
       }
     } else {
@@ -832,6 +846,181 @@ DOM.fileImportCsv.addEventListener('change', (e) => {
   };
   reader.readAsText(file);
   e.target.value = ''; // reset file input
+});
+
+// -------------------------------------------------------------
+// Cloud Sync (Google Sheets) Integration
+// -------------------------------------------------------------
+
+let syncUrl = localStorage.getItem('bukukas_sync_url') || '';
+let syncAuto = localStorage.getItem('bukukas_sync_auto') === 'true';
+
+function initSyncUI() {
+  DOM.syncUrlInput.value = syncUrl;
+  DOM.syncAutoToggle.checked = syncAuto;
+  
+  if (syncUrl) {
+    DOM.syncConnectionStatus.className = 'sync-badge online';
+    DOM.syncConnectionStatus.textContent = 'Terhubung';
+    DOM.btnForceUpload.removeAttribute('disabled');
+  } else {
+    DOM.syncConnectionStatus.className = 'sync-badge offline';
+    DOM.syncConnectionStatus.textContent = 'Tidak Terhubung';
+    DOM.btnForceUpload.setAttribute('disabled', 'true');
+  }
+  
+  const lastSync = localStorage.getItem('bukukas_last_sync_time');
+  DOM.syncLastTime.textContent = lastSync ? lastSync : '-';
+}
+
+// Modal open/close
+DOM.btnOpenSettings.addEventListener('click', () => {
+  initSyncUI();
+  DOM.settingsModal.classList.remove('hidden');
+});
+
+DOM.btnCloseSettings.addEventListener('click', () => {
+  DOM.settingsModal.classList.add('hidden');
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === DOM.settingsModal) {
+    DOM.settingsModal.classList.add('hidden');
+  }
+});
+
+// Save settings when changed
+DOM.syncUrlInput.addEventListener('change', () => {
+  syncUrl = DOM.syncUrlInput.value.trim();
+  localStorage.setItem('bukukas_sync_url', syncUrl);
+  initSyncUI();
+});
+
+DOM.syncAutoToggle.addEventListener('change', () => {
+  syncAuto = DOM.syncAutoToggle.checked;
+  localStorage.setItem('bukukas_sync_auto', syncAuto ? 'true' : 'false');
+});
+
+// Fetch/Pull Data from Cloud
+async function fetchFromCloud(isSilent = false) {
+  if (!syncUrl) return false;
+  
+  if (!isSilent) {
+    DOM.syncConnectionStatus.className = 'sync-badge loading';
+    DOM.syncConnectionStatus.textContent = 'Menghubungkan...';
+    DOM.btnTestSync.setAttribute('disabled', 'true');
+    DOM.btnForceUpload.setAttribute('disabled', 'true');
+  }
+  
+  try {
+    const response = await fetch(syncUrl);
+    if (!response.ok) throw new Error('Koneksi jaringan bermasalah');
+    
+    const result = await response.json();
+    if (result.status === 'success') {
+      const cloudData = result.data || [];
+      
+      // Jika data lokal berbeda dengan cloud, perbarui
+      if (JSON.stringify(transactions) !== JSON.stringify(cloudData)) {
+        transactions = cloudData;
+        saveTransactions();
+        updateUI();
+      }
+      
+      const nowStr = new Date().toLocaleTimeString('id-ID') + ' ' + new Date().toLocaleDateString('id-ID');
+      localStorage.setItem('bukukas_last_sync_time', nowStr);
+      
+      DOM.syncConnectionStatus.className = 'sync-badge online';
+      DOM.syncConnectionStatus.textContent = 'Terhubung';
+      DOM.syncLastTime.textContent = nowStr;
+      DOM.btnForceUpload.removeAttribute('disabled');
+      
+      if (!isSilent) {
+        alert('Data berhasil diunduh dari Google Sheets.');
+      }
+      return true;
+    } else {
+      throw new Error(result.message || 'Kesalahan dari Google Apps Script');
+    }
+  } catch (err) {
+    console.error('Fetch cloud data error:', err);
+    DOM.syncConnectionStatus.className = 'sync-badge offline';
+    DOM.syncConnectionStatus.textContent = 'Offline / Gagal';
+    
+    if (!isSilent) {
+      alert('Gagal memuat data dari Google Sheets. Periksa URL Anda.\nDetail: ' + err.message);
+    }
+    return false;
+  } finally {
+    DOM.btnTestSync.removeAttribute('disabled');
+  }
+}
+
+// Upload/Push Data to Cloud
+async function uploadToCloud(isForce = false) {
+  if (!syncUrl) return false;
+  if (!syncAuto && !isForce) return false;
+  
+  if (isForce) {
+    DOM.syncConnectionStatus.className = 'sync-badge loading';
+    DOM.syncConnectionStatus.textContent = 'Mengunggah...';
+    DOM.btnForceUpload.setAttribute('disabled', 'true');
+    DOM.btnTestSync.setAttribute('disabled', 'true');
+  }
+  
+  try {
+    const response = await fetch(syncUrl, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'text/plain' // Menggunakan simple request untuk menghindari preflight OPTIONS CORS
+      },
+      body: JSON.stringify(transactions)
+    });
+    
+    if (!response.ok) throw new Error('Gagal melakukan POST ke Google Sheet');
+    
+    const result = await response.json();
+    if (result.status === 'success') {
+      const nowStr = new Date().toLocaleTimeString('id-ID') + ' ' + new Date().toLocaleDateString('id-ID');
+      localStorage.setItem('bukukas_last_sync_time', nowStr);
+      
+      DOM.syncConnectionStatus.className = 'sync-badge online';
+      DOM.syncConnectionStatus.textContent = 'Terhubung';
+      DOM.syncLastTime.textContent = nowStr;
+      DOM.btnForceUpload.removeAttribute('disabled');
+      
+      if (isForce) {
+        alert('Data lokal berhasil diunggah ke Google Sheets.');
+      }
+      return true;
+    } else {
+      throw new Error(result.message || 'Kesalahan dari Google Apps Script');
+    }
+  } catch (err) {
+    console.error('Upload cloud data error:', err);
+    DOM.syncConnectionStatus.className = 'sync-badge offline';
+    DOM.syncConnectionStatus.textContent = 'Gagal Mengunggah';
+    
+    if (isForce) {
+      alert('Gagal mengunggah data ke Google Sheets.\nDetail: ' + err.message);
+    }
+    return false;
+  } finally {
+    DOM.btnTestSync.removeAttribute('disabled');
+    DOM.btnForceUpload.removeAttribute('disabled');
+  }
+}
+
+// Attach manual buttons click handlers
+DOM.btnTestSync.addEventListener('click', () => {
+  fetchFromCloud(false);
+});
+
+DOM.btnForceUpload.addEventListener('click', () => {
+  if (confirm('Apakah Anda yakin ingin menimpa seluruh data di Google Sheets dengan data lokal perangkat ini?')) {
+    uploadToCloud(true);
+  }
 });
 
 // -------------------------------------------------------------
@@ -881,6 +1070,11 @@ function init() {
   window.addEventListener('resize', () => {
     renderCharts();
   });
+  
+  // Tarik data terbaru secara silent dari Google Sheet jika terkonfigurasi
+  if (syncUrl) {
+    fetchFromCloud(true);
+  }
 }
 
 // Start Application

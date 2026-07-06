@@ -28,6 +28,13 @@
         <h1>Buku<span class="highlight">Kas</span></h1>
       </div>
       <div class="header-controls">
+        <button id="btn-open-settings" class="btn-icon" aria-label="Pengaturan Sinkronisasi">
+          <!-- Gear Icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
         <button id="theme-toggle" class="btn-icon" aria-label="Toggle Tema">
           <!-- Sun Icon -->
           <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -48,7 +55,6 @@
         </button>
       </div>
     </header>
-
     <!-- DASHBOARD: RINGKASAN SALDO -->
     <section class="dashboard-grid">
       <!-- Card Saldo -->
@@ -64,7 +70,6 @@
           <span id="balance-status" class="status-indicator font-semibold">Memuat data...</span>
         </div>
       </div>
-
       <!-- Card Pemasukan -->
       <div class="glass-card card-income">
         <div class="card-header">
@@ -78,7 +83,6 @@
           <span class="status-trend positive" id="income-percentage">+0% bulan ini</span>
         </div>
       </div>
-
       <!-- Card Pengeluaran -->
       <div class="glass-card card-expense">
         <div class="card-header">
@@ -93,7 +97,6 @@
         </div>
       </div>
     </section>
-
     <!-- ANALYTICS SECTION -->
     <section class="analytics-grid">
       <!-- Chart Area Tren Keuangan -->
@@ -104,7 +107,6 @@
           <div class="chart-placeholder">Menyiapkan Grafik...</div>
         </div>
       </div>
-
       <!-- Chart Donut Kategori Pengeluaran -->
       <div class="glass-card chart-card">
         <h3 class="card-title">Distribusi Pengeluaran</h3>
@@ -114,7 +116,6 @@
         </div>
       </div>
     </section>
-
     <!-- CONTENT COLUMNS: INPUT & HISTORY -->
     <main class="content-grid">
       
@@ -134,7 +135,6 @@
               <span>Pengeluaran</span>
             </label>
           </div>
-
           <div class="form-row">
             <div class="form-group">
               <label for="amount">Nominal (Rp)</label>
@@ -143,13 +143,11 @@
                 <input type="text" id="amount" placeholder="0" required>
               </div>
             </div>
-
             <div class="form-group">
               <label for="date">Tanggal</label>
               <input type="date" id="date" required>
             </div>
           </div>
-
           <div class="form-row">
             <div class="form-group">
               <label for="category">Kategori</label>
@@ -157,13 +155,11 @@
                 <!-- Diletakkan secara dinamis oleh JavaScript -->
               </select>
             </div>
-
             <div class="form-group">
               <label for="description">Keterangan</label>
               <input type="text" id="description" placeholder="Beli susu, bonus, dll.">
             </div>
           </div>
-
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" id="btn-submit-form">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-svg"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -173,7 +169,6 @@
           </div>
         </form>
       </section>
-
       <!-- HISTORI TRANSAKSI -->
       <section class="glass-card history-section">
         <div class="section-header">
@@ -190,7 +185,6 @@
             <input type="file" id="file-import-csv" class="hidden" accept=".csv">
           </div>
         </div>
-
         <!-- Filter & Pencarian -->
         <div class="filters-bar">
           <div class="search-wrapper">
@@ -211,7 +205,6 @@
             <input type="date" id="filter-end-date" title="Tanggal Akhir">
           </div>
         </div>
-
         <!-- Transaksi List -->
         <div class="transactions-wrapper">
           <div class="table-responsive">
@@ -236,16 +229,59 @@
           </div>
         </div>
       </section>
-
     </main>
     
     <!-- Footer -->
     <footer class="app-footer-info">
       <p>&copy; 2026 BukuKas. Dibuat dengan cinta & keindahan visual.</p>
     </footer>
-
   </div>
-
+  <!-- MODAL PENGATURAN SINKRONISASI -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Pengaturan Cloud Sync</h3>
+        <button id="btn-close-settings" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Hubungkan BukuKas dengan Google Sheets Anda untuk sinkronisasi otomatis antar perangkat.</p>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="sync-url-input">Google Web App URL</label>
+          <input type="text" id="sync-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+          <span class="helper-text" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">
+            Dapatkan URL dari penyebaran Google Apps Script Anda. Lihat panduan lengkap di file <a href="google-script.js" target="_blank" style="color: var(--color-primary); text-decoration: none;">google-script.js</a>.
+          </span>
+        </div>
+        <div class="sync-status-box">
+          <div class="status-row">
+            <span>Status Koneksi:</span>
+            <span id="sync-connection-status" class="sync-badge offline">Tidak Terhubung</span>
+          </div>
+          <div class="status-row">
+            <span>Terakhir Sinkron:</span>
+            <span id="sync-last-time">-</span>
+          </div>
+        </div>
+        <div class="form-group checkbox-group" style="margin-bottom: 20px;">
+          <label class="checkbox-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary);">
+            <input type="checkbox" id="sync-auto-toggle">
+            <span>Sinkronisasi Otomatis (Unggah perubahan langsung)</span>
+          </label>
+        </div>
+        <div class="sync-actions-row">
+          <button id="btn-test-sync" class="btn btn-primary" style="flex: 1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon-svg" style="width: 16px; height: 16px; margin-right: 4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Tes & Tarik Data
+          </button>
+          <button id="btn-force-upload" class="btn btn-secondary" style="flex: 1;" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon-svg" style="width: 16px; height: 16px; margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Paksa Unggah
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
