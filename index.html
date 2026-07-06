@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BukuKas - Catatan Keuangan Harian Premium</title>
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-mode">
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="url(#logo-grad)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/>
+              <stop offset="1" stop-color="#10b981"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <h1>Buku<span class="highlight">Kas</span></h1>
+      </div>
+      <div class="header-controls">
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle Tema">
+          <!-- Sun Icon -->
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon -->
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD: RINGKASAN SALDO -->
+    <section class="dashboard-grid">
+      <!-- Card Saldo -->
+      <div class="glass-card card-balance">
+        <div class="card-header">
+          <span>Saldo Bersih</span>
+          <div class="card-icon-wrapper blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line></svg>
+          </div>
+        </div>
+        <div class="card-value" id="total-balance">Rp 0</div>
+        <div class="card-footer">
+          <span id="balance-status" class="status-indicator font-semibold">Memuat data...</span>
+        </div>
+      </div>
+
+      <!-- Card Pemasukan -->
+      <div class="glass-card card-income">
+        <div class="card-header">
+          <span>Total Pemasukan</span>
+          <div class="card-icon-wrapper green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          </div>
+        </div>
+        <div class="card-value" id="total-income">Rp 0</div>
+        <div class="card-footer">
+          <span class="status-trend positive" id="income-percentage">+0% bulan ini</span>
+        </div>
+      </div>
+
+      <!-- Card Pengeluaran -->
+      <div class="glass-card card-expense">
+        <div class="card-header">
+          <span>Total Pengeluaran</span>
+          <div class="card-icon-wrapper rose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+          </div>
+        </div>
+        <div class="card-value" id="total-expense">Rp 0</div>
+        <div class="card-footer">
+          <span class="status-trend negative" id="expense-percentage">0% dari pemasukan</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS SECTION -->
+    <section class="analytics-grid">
+      <!-- Chart Area Tren Keuangan -->
+      <div class="glass-card chart-card">
+        <h3 class="card-title">Tren Keuangan Mingguan</h3>
+        <div class="chart-container" id="trend-chart-container">
+          <!-- Rendered dynamically by JavaScript (SVG) -->
+          <div class="chart-placeholder">Menyiapkan Grafik...</div>
+        </div>
+      </div>
+
+      <!-- Chart Donut Kategori Pengeluaran -->
+      <div class="glass-card chart-card">
+        <h3 class="card-title">Distribusi Pengeluaran</h3>
+        <div class="chart-container" id="category-chart-container">
+          <!-- Rendered dynamically by JavaScript (SVG) -->
+          <div class="chart-placeholder">Menyiapkan Grafik...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT COLUMNS: INPUT & HISTORY -->
+    <main class="content-grid">
+      
+      <!-- FORM INPUT -->
+      <section class="glass-card form-section">
+        <h3 class="card-title" id="form-action-title">Tambah Transaksi Baru</h3>
+        <form id="transaction-form" autocomplete="off">
+          <input type="hidden" id="transaction-id">
+          
+          <div class="form-group-toggle">
+            <label class="toggle-btn active">
+              <input type="radio" name="type" value="pemasukan" checked>
+              <span>Pemasukan</span>
+            </label>
+            <label class="toggle-btn">
+              <input type="radio" name="type" value="pengeluaran">
+              <span>Pengeluaran</span>
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="amount">Nominal (Rp)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">Rp</span>
+                <input type="text" id="amount" placeholder="0" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="date">Tanggal</label>
+              <input type="date" id="date" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Kategori</label>
+              <select id="category" required>
+                <!-- Diletakkan secara dinamis oleh JavaScript -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Keterangan</label>
+              <input type="text" id="description" placeholder="Beli susu, bonus, dll.">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-submit-form">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-svg"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Simpan Transaksi
+            </button>
+            <button type="button" class="btn btn-secondary hidden" id="btn-cancel-edit">Batal</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- HISTORI TRANSAKSI -->
+      <section class="glass-card history-section">
+        <div class="section-header">
+          <h3 class="card-title">Daftar Transaksi</h3>
+          <div class="data-actions">
+            <button id="btn-export-csv" class="btn-text" title="Ekspor ke CSV">
+              <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Ekspor
+            </button>
+            <button id="btn-trigger-import" class="btn-text" title="Impor dari CSV">
+              <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Impor
+            </button>
+            <input type="file" id="file-import-csv" class="hidden" accept=".csv">
+          </div>
+        </div>
+
+        <!-- Filter & Pencarian -->
+        <div class="filters-bar">
+          <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="search-filter" placeholder="Cari keterangan...">
+          </div>
+          <div class="filter-controls">
+            <select id="filter-type">
+              <option value="all">Semua Tipe</option>
+              <option value="pemasukan">Pemasukan</option>
+              <option value="pengeluaran">Pengeluaran</option>
+            </select>
+            <select id="filter-category">
+              <option value="all">Semua Kategori</option>
+              <!-- Dinamis -->
+            </select>
+            <input type="date" id="filter-start-date" title="Tanggal Mulai">
+            <input type="date" id="filter-end-date" title="Tanggal Akhir">
+          </div>
+        </div>
+
+        <!-- Transaksi List -->
+        <div class="transactions-wrapper">
+          <div class="table-responsive">
+            <table class="transaction-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Kategori</th>
+                  <th>Keterangan</th>
+                  <th class="text-right">Nominal</th>
+                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-list-body">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+          <div id="no-data-alert" class="no-data-view hidden">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="empty-icon"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <p>Tidak ada transaksi yang cocok dengan filter atau data masih kosong.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="app-footer-info">
+      <p>&copy; 2026 BukuKas. Dibuat dengan cinta & keindahan visual.</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
